@@ -8,6 +8,7 @@ import { useRef, useState } from "react";
 export default function Home() {
   const [showRoomModal, setShowRoomModal] = useState(false);
   const inputRoom = useRef<HTMLInputElement>(null);
+  const inputUsername = useRef<HTMLInputElement>(null);
 
   const handleCloseRoomModal = () => {
     setShowRoomModal(false);
@@ -68,6 +69,23 @@ export default function Home() {
           </span>
         </Modal.Header>
         <Modal.Body className="bg-gradient-to-b from-dark to-transparent">
+          <div className="mb-8">
+            <label
+              htmlFor="username"
+              className="block mb-1 text-sm font-medium text-gray-900 dark:text-white"
+            >
+              Nome de usuário
+            </label>
+            <input
+              ref={inputUsername}
+              tabIndex={2}
+              type="text"
+              id="username"
+              className="bg-gray-50 border border-primary focus:ring-secondary text-gray-900 text-sm rounded-lg focus:ring-1 block w-full p-2.5"
+              placeholder="username"
+              required
+            />
+          </div>
           <div className="flex justify-center">
             <button
               type="button"
@@ -97,7 +115,7 @@ export default function Home() {
                 type="text"
                 id="code"
                 className="bg-gray-50 border border-primary focus:ring-secondary text-gray-900 text-sm rounded-lg focus:ring-1 block w-full p-2.5"
-                placeholder="32131321"
+                placeholder="12345"
                 required
               />
             </div>
@@ -105,6 +123,8 @@ export default function Home() {
               type="button"
               className="text-white hover:bg-gradient-to-br focus:ring-4 focus:ring-secondary font-medium text-xl px-5 py-2.5 bg-gradient-to-tr from-primary to-secondary uppercase p-6 rounded-xl cursor-pointer"
               onClick={() => {
+                inputUsername.current &&
+                  localStorage.setItem("username", inputUsername.current.value);
                 router.push(`/room/${inputRoom.current?.value}`);
               }}
             >
