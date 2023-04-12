@@ -56,7 +56,7 @@ const RoomComponent = () => {
         <textarea
           ref={textAreaRef}
           rows={4}
-          className="rounded-lg border-2 border-primary focus:ring-primary focus:ring-2 bg-white text-black focus: px-4 py-2 w-full resize-none pr-[50px]"
+          className="rounded-lg border-2 border-primary focus:ring-primary focus:ring-2 bg-gray-50 text-black focus: px-4 py-2 w-full resize-none pr-[50px]"
         />
         {me && (
           <div

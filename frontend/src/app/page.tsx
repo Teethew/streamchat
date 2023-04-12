@@ -90,6 +90,13 @@ export default function Home() {
             <button
               type="button"
               className="text-white hover:bg-gradient-to-br focus:ring-4 focus:ring-secondary font-medium text-xl px-5 py-2.5 bg-gradient-to-tr from-primary to-secondary uppercase p-6 rounded-xl cursor-pointer"
+              onClick={() => {
+                inputUsername.current &&
+                  localStorage.setItem("username", inputUsername.current.value);
+                router.push(
+                  `/room/${Math.round(Math.random() * 1000000000000)}`
+                );
+              }}
             >
               Criar sala
             </button>
