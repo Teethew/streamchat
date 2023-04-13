@@ -13,13 +13,12 @@ const VideoCall = ({ id, children }: PropsWithChildren<VideoCallProps>) => {
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
 
-  const peer = useRef(
-    new Peer(`streamchat-${id}-${localStorage.getItem("username")}`)
-  );
-
   useEffect(() => {
-    console.log("peer", peer.current);
-    peer.current.on("call", (call) => {
+    const peer = new Peer(
+      `streamchat-${id}-${localStorage.getItem("username")}`
+    );
+    console.log("peer", peer);
+    peer.on("call", (call) => {
       console.log(call);
       navigator.mediaDevices
         .getUserMedia({ video: true, audio: true })
@@ -36,24 +35,25 @@ const VideoCall = ({ id, children }: PropsWithChildren<VideoCallProps>) => {
           console.error("Failed to get local stream", err);
         });
     });
+    if (localStorage.getItem("username") != "renan") {
+      navigator.mediaDevices
+        .getUserMedia({ video: true, audio: true })
+        .then((stream) => {
+          console.log("stream", stream);
+          localVideoRef.current!.srcObject = stream;
+          const call = peer.call(`streamchat-${id}-renan`, stream);
+          call.on("stream", (remoteStream) => {
+            console.log("remoteStream", remoteStream);
+            remoteVideoRef.current!.srcObject = remoteStream;
+          });
+        })
+        .catch((err) => {
+          console.error("Failed to get local stream", err);
+        });
+    }
   }, []);
 
-  const handleCallPerson = () => {
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
-      .then((stream) => {
-        console.log("stream", stream);
-        localVideoRef.current!.srcObject = stream;
-        const call = peer.current.call(`streamchat-${id}-renan`, stream);
-        call.on("stream", (remoteStream) => {
-          console.log("remoteStream", remoteStream);
-          remoteVideoRef.current!.srcObject = remoteStream;
-        });
-      })
-      .catch((err) => {
-        console.error("Failed to get local stream", err);
-      });
-  };
+  const handleCallPerson = () => {};
 
   return (
     <>
