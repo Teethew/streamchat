@@ -1,3 +1,5 @@
+"use client";
+
 import {
   createContext,
   PropsWithChildren,
@@ -38,7 +40,6 @@ export const ChatProvider: React.FC<PropsWithChildren<ChatProviderProps>> = ({
   children,
   id,
 }) => {
-  const [socket, setSocket] = useState<WebSocket>();
   const [stompClient, setStompClient] = useState<CompatClient>();
 
   const [chatMessages, setChatMessages] = useState<MessageReceived[]>([]);
@@ -56,14 +57,12 @@ export const ChatProvider: React.FC<PropsWithChildren<ChatProviderProps>> = ({
   }, [router]);
 
   useEffect(() => {
-    setSocket(new SockJS("https://streamchat-production.up.railway.app/chat"));
+    setStompClient(
+      Stomp.over(
+        () => new SockJS("https://streamchat-production.up.railway.app/chat")
+      )
+    );
   }, [username]);
-
-  useEffect(() => {
-    if (socket) {
-      setStompClient(Stomp.over(socket));
-    }
-  }, [socket]);
 
   const onMessageReceived = useCallback(
     (payload: any) => {

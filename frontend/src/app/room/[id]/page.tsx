@@ -1,5 +1,6 @@
 "use client";
 
+import Voip from "@/components/voip";
 import { ChatProvider, useChat } from "@/context/chat";
 import { useRef } from "react";
 
@@ -103,6 +104,7 @@ export default function Room({ params: { id } }: { params: { id: string } }) {
   return (
     <ChatProvider id={id}>
       <RoomComponent />
+      <Voip />
     </ChatProvider>
   );
 }
