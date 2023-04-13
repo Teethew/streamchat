@@ -15,7 +15,28 @@ const Voip = () => {
 
   useEffect(() => {
     function createPeerConnection() {
-      pc.current = new RTCPeerConnection();
+      pc.current = new RTCPeerConnection({
+        iceServers: [
+          {
+            urls: "stun:a.relay.metered.ca:80",
+          },
+          {
+            urls: "turn:a.relay.metered.ca:80",
+            username: "a0f8b7ca844daf079e7e3036",
+            credential: "Q94lDFFQW1yw5qEc",
+          },
+          {
+            urls: "turn:a.relay.metered.ca:443",
+            username: "a0f8b7ca844daf079e7e3036",
+            credential: "Q94lDFFQW1yw5qEc",
+          },
+          {
+            urls: "turn:a.relay.metered.ca:443?transport=tcp",
+            username: "a0f8b7ca844daf079e7e3036",
+            credential: "Q94lDFFQW1yw5qEc",
+          },
+        ],
+      });
       if (!localStream.current || !pc.current) return;
       pc.current.onicecandidate = ({ candidate }) => {
         const message = {
@@ -138,10 +159,8 @@ const Voip = () => {
 
   return (
     <>
-      {/* <audio autoPlay playsInline ref={audioRef} /> */}
       <audio
         ref={localAudioRef}
-        id="localVideo"
         className="border border-white"
         playsInline
         autoPlay
@@ -149,7 +168,6 @@ const Voip = () => {
       />
       <audio
         ref={remoteAudioRef}
-        id="remoteVideo"
         className="border border-white"
         playsInline
         autoPlay
