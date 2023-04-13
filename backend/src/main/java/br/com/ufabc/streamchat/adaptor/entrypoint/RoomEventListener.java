@@ -6,6 +6,7 @@ import br.com.ufabc.streamchat.entity.Mensagem;
 import br.com.ufabc.streamchat.usecase.EventUseCase;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Headers;
@@ -27,7 +28,8 @@ public class RoomEventListener {
 
     private final EventUseCase eventUseCase;
 
-    private final ConexaoRepository repository;
+    @Autowired
+    private ConexaoRepository repository;
 
     @MessageMapping("/connect")
     public void conectarSala(@Payload Mensagem mensagem, @Header(SESSION_ID) String idSessao) {
