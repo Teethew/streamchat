@@ -3,7 +3,6 @@
 import { PropsWithChildren, useEffect, useRef, useState } from "react";
 
 import { Peer } from "peerjs";
-import { error } from "console";
 
 type VideoCallProps = {
   id: string;
@@ -14,42 +13,39 @@ const VideoCall = ({ id, children }: PropsWithChildren<VideoCallProps>) => {
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    const peer = new Peer(
-      `streamchat-${id}-${localStorage.getItem("username")}`
-    );
-    console.log("peer", peer);
-    peer.on("call", (call) => {
-      console.log(call);
-      navigator.mediaDevices
-        .getUserMedia({ video: true, audio: true })
-        .then((stream) => {
-          console.log("stream", stream);
-          localVideoRef.current!.srcObject = stream;
-          console.log(call);
-          call.on("stream", (remoteStream) => {
-            console.log("remoteStream", remoteStream);
-            remoteVideoRef.current!.srcObject = remoteStream;
+    if (window) {
+      const me = localStorage.getItem("username");
+      const peer = new Peer(`streamchat-${id}-${me}`);
+      if (me !== "renan") {
+        console.log("aqui não papai");
+        navigator.mediaDevices
+          .getUserMedia({ video: true, audio: true })
+          .then((stream) => {
+            localVideoRef.current!.srcObject = stream;
+            const call = peer.call(`streamchat-${id}-renan`, stream);
+            call.on("stream", (remoteStream) => {
+              remoteVideoRef.current!.srcObject = remoteStream;
+            });
+          })
+          .catch((err) => {
+            console.error("Failed to get local stream", err);
           });
-        })
-        .catch((err) => {
-          console.error("Failed to get local stream", err);
-        });
-    });
-    if (localStorage.getItem("username") != "renan") {
-      navigator.mediaDevices
-        .getUserMedia({ video: true, audio: true })
-        .then((stream) => {
-          console.log("stream", stream);
-          localVideoRef.current!.srcObject = stream;
-          const call = peer.call(`streamchat-${id}-renan`, stream);
-          call.on("stream", (remoteStream) => {
-            console.log("remoteStream", remoteStream);
-            remoteVideoRef.current!.srcObject = remoteStream;
+      }
+      peer.on("call", (call) => {
+        navigator.mediaDevices
+          .getUserMedia({ video: true, audio: true })
+          .then((stream) => {
+            localVideoRef.current!.srcObject = stream;
+            call.answer(stream); // Answer the call with an A/V stream.
+            call.on("stream", (remoteStream) => {
+              // Show stream in some <video> element.
+              remoteVideoRef.current!.srcObject = remoteStream;
+            });
+          })
+          .catch((err) => {
+            console.error("Failed to get local stream", err);
           });
-        })
-        .catch((err) => {
-          console.error("Failed to get local stream", err);
-        });
+      });
     }
   }, []);
 
