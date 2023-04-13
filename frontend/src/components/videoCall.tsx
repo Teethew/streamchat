@@ -27,6 +27,7 @@ const VideoCall = ({ id, children }: PropsWithChildren<VideoCallProps>) => {
             console.log("stream", stream);
             localAudioRef.current!.srcObject = stream;
             call.on("stream", (remoteStream) => {
+              console.log("remoteStream", remoteStream);
               remoteAudioRef.current!.srcObject = remoteStream;
             });
           })
@@ -45,6 +46,7 @@ const VideoCall = ({ id, children }: PropsWithChildren<VideoCallProps>) => {
         localAudioRef.current!.srcObject = stream;
         const call = peer.current.call(`streamchat-${id}-renan`, stream);
         call.on("stream", (remoteStream) => {
+          console.log("remoteStream", remoteStream);
           remoteAudioRef.current!.srcObject = remoteStream;
         });
       })
