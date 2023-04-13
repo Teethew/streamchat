@@ -34,11 +34,10 @@ public class RoomEventListener {
     @MessageMapping("/connect")
     public void conectarSala(@Payload Mensagem mensagem, @Header(SESSION_ID) String idSessao) {
         log.info("Connected: " + idSessao);
-        Conexao conexao = new Conexao(
-                idSessao,
-                mensagem.getUsuario(),
-                mensagem.getIdSala()
-        );
+        Conexao conexao = new Conexao();
+        conexao.setIdSessao(idSessao);
+        conexao.setUsuario(mensagem.getUsuario());
+        conexao.setSala(mensagem.getIdSala());
         repository.save(conexao);
         log.info(repository.findAll().toString());
         eventUseCase.notificarConexao(idSessao);
