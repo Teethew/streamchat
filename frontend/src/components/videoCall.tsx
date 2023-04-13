@@ -10,8 +10,8 @@ type VideoCallProps = {
 };
 
 const VideoCall = ({ id, children }: PropsWithChildren<VideoCallProps>) => {
-  const localAudioRef = useRef<HTMLVideoElement>(null);
-  const remoteAudioRef = useRef<HTMLVideoElement>(null);
+  const localVideoRef = useRef<HTMLVideoElement>(null);
+  const remoteVideoRef = useRef<HTMLVideoElement>(null);
 
   const peer = useRef(
     new Peer(`streamchat-${id}-${localStorage.getItem("username")}`)
@@ -25,10 +25,10 @@ const VideoCall = ({ id, children }: PropsWithChildren<VideoCallProps>) => {
           .getUserMedia({ video: true, audio: true })
           .then((stream) => {
             console.log("stream", stream);
-            localAudioRef.current!.srcObject = stream;
+            localVideoRef.current!.srcObject = stream;
             call.on("stream", (remoteStream) => {
               console.log("remoteStream", remoteStream);
-              remoteAudioRef.current!.srcObject = remoteStream;
+              remoteVideoRef.current!.srcObject = remoteStream;
             });
           })
           .catch((err) => {
@@ -43,11 +43,11 @@ const VideoCall = ({ id, children }: PropsWithChildren<VideoCallProps>) => {
       .getUserMedia({ video: true, audio: true })
       .then((stream) => {
         console.log("stream", stream);
-        localAudioRef.current!.srcObject = stream;
+        localVideoRef.current!.srcObject = stream;
         const call = peer.current.call(`streamchat-${id}-renan`, stream);
         call.on("stream", (remoteStream) => {
           console.log("remoteStream", remoteStream);
-          remoteAudioRef.current!.srcObject = remoteStream;
+          remoteVideoRef.current!.srcObject = remoteStream;
         });
       })
       .catch((err) => {
@@ -59,14 +59,14 @@ const VideoCall = ({ id, children }: PropsWithChildren<VideoCallProps>) => {
     <>
       <div className="grid grid-cols-4">
         <video
-          ref={localAudioRef}
+          ref={localVideoRef}
           className="border border-white"
           playsInline
           autoPlay
           muted
         />
         <video
-          ref={remoteAudioRef}
+          ref={remoteVideoRef}
           className="border border-white"
           playsInline
           autoPlay
