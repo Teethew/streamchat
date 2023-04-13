@@ -3,6 +3,7 @@ package br.com.ufabc.streamchat.adaptor.entrypoint;
 import br.com.ufabc.streamchat.entity.Mensagem;
 import br.com.ufabc.streamchat.usecase.EventUseCase;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Headers;
@@ -17,6 +18,7 @@ import java.util.Map;
 
 @Controller
 @AllArgsConstructor
+@Slf4j
 public class RoomEventListener {
 
     private static final String SESSION_ID = "simpSessionId";
@@ -25,14 +27,14 @@ public class RoomEventListener {
 
     @MessageMapping("/connect")
     public void conectarSala(@Payload Mensagem mensagem, @Header(SESSION_ID) String idSessao) {
-        System.out.println("Connected: " + idSessao);
+        log.info("Connected: " + idSessao);
         eventUseCase.notificarConexao(idSessao);
     }
 
     @EventListener
     private void handleSessionDisconnect(SessionDisconnectEvent event) {
         String idSessao = (String) event.getMessage().getHeaders().get(SESSION_ID);
-        System.out.println("Disconnected: " + idSessao);
+        log.info("Disconnected: " + idSessao);
         eventUseCase.notificarDesconexao(idSessao);
     }
 }
