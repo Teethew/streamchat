@@ -201,6 +201,7 @@ const Voip = ({ id }: VoipProps) => {
         navigator.mediaDevices
           .getUserMedia({ video: true, audio: true })
           .then((stream) => {
+            localAudioRef.current!.srcObject = stream;
             const call = peer.call(`streamchat-${id}-renan`, stream);
             call.on("stream", (remoteStream) => {
               remoteAudioRef.current!.srcObject = remoteStream;
@@ -214,6 +215,7 @@ const Voip = ({ id }: VoipProps) => {
         navigator.mediaDevices
           .getUserMedia({ video: true, audio: true })
           .then((stream) => {
+            localAudioRef.current!.srcObject = stream;
             call.answer(stream); // Answer the call with an A/V stream.
             call.on("stream", (remoteStream) => {
               // Show stream in some <video> element.
