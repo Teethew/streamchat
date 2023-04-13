@@ -3,6 +3,7 @@
 import { PropsWithChildren, useEffect, useRef, useState } from "react";
 
 import { Peer } from "peerjs";
+import { error } from "console";
 
 type VideoCallProps = {
   id: string;
@@ -17,11 +18,13 @@ const VideoCall = ({ id, children }: PropsWithChildren<VideoCallProps>) => {
   );
 
   useEffect(() => {
+    console.log("peer", peer.current);
     if (window) {
       peer.current.on("call", (call) => {
         navigator.mediaDevices
           .getUserMedia({ video: true, audio: true })
           .then((stream) => {
+            console.log("stream", stream);
             localAudioRef.current!.srcObject = stream;
             call.on("stream", (remoteStream) => {
               remoteAudioRef.current!.srcObject = remoteStream;
@@ -38,6 +41,7 @@ const VideoCall = ({ id, children }: PropsWithChildren<VideoCallProps>) => {
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
       .then((stream) => {
+        console.log("stream", stream);
         localAudioRef.current!.srcObject = stream;
         const call = peer.current.call(`streamchat-${id}-renan`, stream);
         call.on("stream", (remoteStream) => {
@@ -69,6 +73,7 @@ const VideoCall = ({ id, children }: PropsWithChildren<VideoCallProps>) => {
       {children}
       <div className="flex">
         <button
+          type="button"
           className="flex justify-center items-center hover:bg-gradient-to-br focus:ring-1 focus:ring-secondary bg-gradient-to-tr from-primary to-secondary w-10 h-10 rounded-full cursor-pointer"
           onClick={handleCallPerson}
         >
