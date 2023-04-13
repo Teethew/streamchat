@@ -9,37 +9,23 @@ type VideoCallProps = {
 };
 
 const VideoCall = ({ id, children }: PropsWithChildren<VideoCallProps>) => {
-  const localVideoRef = useRef<HTMLVideoElement>(null);
-  const remoteVideoRef = useRef<HTMLVideoElement>(null);
+  const localAudioRef = useRef<HTMLVideoElement>(null);
+  const remoteAudioRef = useRef<HTMLVideoElement>(null);
+
+  const peer = useRef(
+    new Peer(`streamchat-${id}-${localStorage.getItem("username")}`)
+  );
 
   useEffect(() => {
     if (window) {
-      const me = localStorage.getItem("username");
-      const peer = new Peer(`streamchat-${id}-${me}`);
-      if (me !== "renan") {
-        console.log("aqui não papai");
+      peer.current.on("call", (call) => {
         navigator.mediaDevices
           .getUserMedia({ video: true, audio: true })
           .then((stream) => {
-            localVideoRef.current!.srcObject = stream;
-            const call = peer.call(`streamchat-${id}-renan`, stream);
+            localAudioRef.current!.srcObject = stream;
+            call.answer(stream);
             call.on("stream", (remoteStream) => {
-              remoteVideoRef.current!.srcObject = remoteStream;
-            });
-          })
-          .catch((err) => {
-            console.error("Failed to get local stream", err);
-          });
-      }
-      peer.on("call", (call) => {
-        navigator.mediaDevices
-          .getUserMedia({ video: true, audio: true })
-          .then((stream) => {
-            localVideoRef.current!.srcObject = stream;
-            call.answer(stream); // Answer the call with an A/V stream.
-            call.on("stream", (remoteStream) => {
-              // Show stream in some <video> element.
-              remoteVideoRef.current!.srcObject = remoteStream;
+              remoteAudioRef.current!.srcObject = remoteStream;
             });
           })
           .catch((err) => {
@@ -49,20 +35,33 @@ const VideoCall = ({ id, children }: PropsWithChildren<VideoCallProps>) => {
     }
   }, []);
 
-  const handleCallPerson = () => {};
+  const handleCallPerson = () => {
+    navigator.mediaDevices
+      .getUserMedia({ video: true, audio: true })
+      .then((stream) => {
+        localAudioRef.current!.srcObject = stream;
+        const call = peer.current.call(`streamchat-${id}-renan`, stream);
+        call.on("stream", (remoteStream) => {
+          remoteAudioRef.current!.srcObject = remoteStream;
+        });
+      })
+      .catch((err) => {
+        console.error("Failed to get local stream", err);
+      });
+  };
 
   return (
     <>
       <div className="grid grid-cols-4">
         <video
-          ref={localVideoRef}
+          ref={localAudioRef}
           className="border border-white"
           playsInline
           autoPlay
           muted
         />
         <video
-          ref={remoteVideoRef}
+          ref={remoteAudioRef}
           className="border border-white"
           playsInline
           autoPlay
@@ -71,7 +70,6 @@ const VideoCall = ({ id, children }: PropsWithChildren<VideoCallProps>) => {
       {children}
       <div className="flex">
         <button
-          type="button"
           className="flex justify-center items-center hover:bg-gradient-to-br focus:ring-1 focus:ring-secondary bg-gradient-to-tr from-primary to-secondary w-10 h-10 rounded-full cursor-pointer"
           onClick={handleCallPerson}
         >
