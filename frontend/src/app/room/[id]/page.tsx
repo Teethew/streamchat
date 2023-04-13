@@ -1,10 +1,10 @@
 "use client";
 
-import Voip from "@/components/voip";
+import VideoCall from "@/components/videoCall";
 import { ChatProvider, useChat } from "@/context/chat";
-import { useRef } from "react";
+import { PropsWithChildren, useRef } from "react";
 
-const RoomComponent = () => {
+const RoomComponent = ({ children }: PropsWithChildren) => {
   const { chatMessages, sendMessage } = useChat();
 
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
@@ -13,6 +13,7 @@ const RoomComponent = () => {
 
   return (
     <main className="container mx-auto flex-grow flex flex-col p-8 gap-3">
+      {children}
       <div className="flex-grow border-2 border-primary rounded-xl p-3 overflow-auto">
         {chatMessages.map(({ mensagem, usuario, date }, index) => (
           <div key={index} className="flex items-center gap-3 my-4">
@@ -103,8 +104,9 @@ const RoomComponent = () => {
 export default function Room({ params: { id } }: { params: { id: string } }) {
   return (
     <ChatProvider id={id}>
-      <RoomComponent />
-      <Voip id={id} />
+      <RoomComponent>
+        <VideoCall id={id} />
+      </RoomComponent>
     </ChatProvider>
   );
 }
