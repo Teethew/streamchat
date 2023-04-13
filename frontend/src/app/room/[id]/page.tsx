@@ -104,7 +104,7 @@ export default function Room({ params: { id } }: { params: { id: string } }) {
   return (
     <ChatProvider id={id}>
       <RoomComponent />
-      <Voip />
+      <Voip id={id} />
     </ChatProvider>
   );
 }
