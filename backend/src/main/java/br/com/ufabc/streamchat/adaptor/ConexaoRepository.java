@@ -9,4 +9,5 @@ public interface ConexaoRepository extends CrudRepository<Conexao, String> {
     List<Conexao> findAll();
     Conexao findByUsuario(String usuario);
     Conexao findByIdSessao(String idSessao);
+    List<Conexao> findAllBySala(String sala);
 }
