@@ -19,23 +19,23 @@ const VideoCall = ({ id, children }: PropsWithChildren<VideoCallProps>) => {
 
   useEffect(() => {
     console.log("peer", peer.current);
-    if (window) {
-      peer.current.on("call", (call) => {
-        navigator.mediaDevices
-          .getUserMedia({ video: true, audio: true })
-          .then((stream) => {
-            console.log("stream", stream);
-            localVideoRef.current!.srcObject = stream;
-            call.on("stream", (remoteStream) => {
-              console.log("remoteStream", remoteStream);
-              remoteVideoRef.current!.srcObject = remoteStream;
-            });
-          })
-          .catch((err) => {
-            console.error("Failed to get local stream", err);
+    peer.current.on("call", (call) => {
+      console.log(call);
+      navigator.mediaDevices
+        .getUserMedia({ video: true, audio: true })
+        .then((stream) => {
+          console.log("stream", stream);
+          localVideoRef.current!.srcObject = stream;
+          console.log(call);
+          call.on("stream", (remoteStream) => {
+            console.log("remoteStream", remoteStream);
+            remoteVideoRef.current!.srcObject = remoteStream;
           });
-      });
-    }
+        })
+        .catch((err) => {
+          console.error("Failed to get local stream", err);
+        });
+    });
   }, []);
 
   const handleCallPerson = () => {
