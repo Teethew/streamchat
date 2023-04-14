@@ -2,7 +2,7 @@
 
 import VideoCall from "@/components/videoCall";
 import { ChatProvider, useChat } from "@/context/chat";
-import { PropsWithChildren, useRef } from "react";
+import { useRef } from "react";
 
 const RoomComponent = () => {
   const { chatMessages, sendMessage } = useChat();

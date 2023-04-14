@@ -43,14 +43,19 @@ const VideoCall = ({ id, children }: PropsWithChildren<VideoCallProps>) => {
           .then((stream) => {
             localVideoRef.current!.srcObject = stream;
             call.answer(stream);
-            console.log("executou fora do on stream on call");
             call.on("stream", (remoteStream) => {
               if (!remoteVideosRef.current) return;
-              console.log("executou on call");
               setStreams((prevStreams) => [
                 ...prevStreams.filter((it) => it.id !== remoteStream.id),
                 remoteStream,
               ]);
+              call.on("iceStateChanged", (event) => {
+                if (event === "disconnected") {
+                  setStreams((prevStreams) =>
+                    prevStreams.filter((it) => it.id !== remoteStream.id)
+                  );
+                }
+              });
             });
           })
           .catch((err) => {
@@ -70,18 +75,21 @@ const VideoCall = ({ id, children }: PropsWithChildren<VideoCallProps>) => {
                 .map((it) => it.usuario)
                 .filter((it) => it !== localStorage.getItem("username"));
 
-              console.log(otherUsers);
-
               for (const user of otherUsers) {
                 const call = peer.call(`streamchat-${id}-${user}`, stream);
-                console.log("executou fora do on stream do call");
                 call.on("stream", (remoteStream) => {
                   if (!remoteVideosRef.current) return;
-                  console.log("executou do call");
                   setStreams((prevStreams) => [
                     ...prevStreams.filter((it) => it.id !== remoteStream.id),
                     remoteStream,
                   ]);
+                  call.on("iceStateChanged", (event) => {
+                    if (event === "disconnected") {
+                      setStreams((prevStreams) =>
+                        prevStreams.filter((it) => it.id !== remoteStream.id)
+                      );
+                    }
+                  });
                 });
               }
             });
@@ -105,14 +113,59 @@ const VideoCall = ({ id, children }: PropsWithChildren<VideoCallProps>) => {
           autoPlay
           muted
         />
-        {streams.map((_stream, index) => (
-          <video
-            key={index}
-            className="border border-white"
-            playsInline
-            autoPlay
-          />
-        ))}
+        {streams.map(
+          (stream, index) =>
+            stream.active && (
+              <video
+                key={index}
+                className="border border-white"
+                playsInline
+                autoPlay
+                onAbort={() => {
+                  console.log("onAbort");
+                }}
+                onAbortCapture={() => {
+                  console.log("onAbortCapture");
+                }}
+                onPause={() => {
+                  console.log("onPause");
+                }}
+                onEnded={() => {
+                  console.log("onEnded");
+                }}
+                onEndedCapture={() => {
+                  console.log("onEndedCapture");
+                }}
+                onWaiting={() => {
+                  console.log("onWaiting");
+                }}
+                onWaitingCapture={() => {
+                  console.log("onWaitingCapture");
+                }}
+                onError={() => {
+                  console.log("onError");
+                }}
+                onErrorCapture={() => {
+                  console.log("onErrorCapture");
+                }}
+                onStalled={() => {
+                  console.log("onStalled");
+                }}
+                onStalledCapture={() => {
+                  console.log("onStalledCapture");
+                }}
+                onSuspend={() => {
+                  console.log("onSuspend");
+                }}
+                onSuspendCapture={() => {
+                  console.log("onSuspendCapture");
+                }}
+                onWheel={() => {
+                  console.log("onWheel");
+                }}
+              />
+            )
+        )}
       </div>
       {children}
       <div className="flex"></div>
